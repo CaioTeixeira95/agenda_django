@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agenda - Login</title>
+    <style>
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+        }
+
+    </style>
+</head>
+<body>
+
+    <form action="submit" method="POST">{% csrf_token %}
+        <div style="width: 100%; text-align: center; margin-top: 100px;">
+
+            <h1>Login</h1>
+            <br><br>
+            
+            <label>Usuário:</label>
+            <input type="text" name="username">
+            <br><br>
+
+            <label>Senha:</label>
+            <input type="password" name="password">
+            <br><br>
+
+            <input type="submit" value="Entrar">
+
+        </div>
+    </form>
+
+    {% for message in messages %}
+        <div style="width: 100%; text-align: center; margin-top: 15px;">
+            <strong>Erro: </strong> {{ message }}
+        </div>
+    {% endfor %}
+</body>
+</html>
