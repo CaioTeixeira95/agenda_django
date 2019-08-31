@@ -37,7 +37,12 @@ def logout_user(request):
 @login_required(login_url='/login/')
 def event(request):
     """Insert a new event."""
-    return render(request, 'event.html')
+    id_event = request.GET.get('id')
+    data = {}
+    if id_event:
+        data['event'] = Event.objects.get(id=id_event)
+
+    return render(request, 'event.html', data)
 
 def submit_event(request):
     """Save a new event."""
@@ -45,13 +50,38 @@ def submit_event(request):
         title = request.POST.get('title')
         event_date = request.POST.get('event_date')
         description = request.POST.get('description')
+        local = request.POST.get('local')
         user = request.user
-        Event.objects.create(
-            title=title, 
-            event_date=event_date, 
-            description=description, 
-            user=user
-        )
+
+        id_event = request.POST.get('id_event')
+
+        if id_event:
+            event = Event.objects.get(id=id_event)
+            if event.user == user:
+                event.title = title
+                event.event_date = event_date
+                event.description = description
+                event.local = local
+                event.save()
+        else:
+            Event.objects.create(
+                title=title, 
+                event_date=event_date, 
+                description=description,
+                local=local,
+                user=user
+            )
+
+    return redirect('/')
+
+@login_required()
+def delete_event(request, id_event):
+    """Delete an event."""
+    user = request.user
+    event = Event.objects.get(id=id_event, user=user)
+    
+    if user == event.user:
+        event.delete()
 
     return redirect('/')
 
