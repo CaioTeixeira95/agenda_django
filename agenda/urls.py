@@ -15,15 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core import views
 from django.views.generic import RedirectView
+from core import views
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('events/<title>/', views.events),
     path('agenda/', views.event_list),
-    #path('', views.index)
+    path('agenda/event/', views.event),
+    path('agenda/event/submit', views.submit_event),
+    #path('', views.index),
     path('', RedirectView.as_view(url='/agenda/')),
     path('login/', views.login_user),
     path('login/submit', views.submit_login),

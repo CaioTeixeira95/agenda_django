@@ -1,17 +1,20 @@
-from django.shortcuts import render, HttpResponse, redirect
-from core.models import Event
+"""Methods for url's call."""
+
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from core.models import Event
 
 
 # Create your views here.
 
 def login_user(request):
+    """Render the Login Page."""
     return render(request, 'login.html')
 
 def submit_login(request):
-
+    """Verify the login informations from user."""
     if request.POST:
 
         username = request.POST.get('username')
@@ -27,18 +30,37 @@ def submit_login(request):
     return redirect('/')
 
 def logout_user(request):
+    """Logout the user."""
     logout(request)
     return redirect('/')
 
-def events(request, title):
-    res = Event.objects.get(title=title)
-    return HttpResponse("The local of the event is: {}".format(res.local))
+@login_required(login_url='/login/')
+def event(request):
+    """Insert a new event."""
+    return render(request, 'event.html')
+
+def submit_event(request):
+    """Save a new event."""
+    if request.POST:
+        title = request.POST.get('title')
+        event_date = request.POST.get('event_date')
+        description = request.POST.get('description')
+        user = request.user
+        Event.objects.create(
+            title=title, 
+            event_date=event_date, 
+            description=description, 
+            user=user
+        )
+
+    return redirect('/')
 
 # def index(request):
 #     return redirect('/agenda/')
 
 @login_required(login_url='/login/')
 def event_list(request):
+    """List all events."""
     user = request.user
     #event = Event.objects.get(id=1) Pega um determinado registro
     #events = Event.objects.all() # Pega todos os regitro
